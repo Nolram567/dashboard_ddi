@@ -21,6 +21,7 @@ Meine Skripte habe ich im Github Repository [Doing_DDI](https://github.com/Nolra
 Das Skript `corpus_preprocessor.py` enthält eine Klasse, mit der man das Korpus für die Berechnung eines Themenmodells und (für andere Text-Mining-Methoden) vorverarbeiten kann. Wichtige Hintergründe zu der Vorverarbeitung von Texten für das Topic Modeling in der Politikwissenschaft können beispielsweise bei Denny & Spirling nachgelesen werden[^1].
 
 ---
+
 ## Die Vorverarbeitung der Daten
 
 Die von mir durchgeführte Vorverarbeitung bestand aus den folgenden Schritten, die ich in der Methode `prepare_for_topic_modeling` der Klasse `CorpusPreprocessor` gebündelt habe:

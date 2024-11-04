@@ -51,58 +51,12 @@ Die mathematischen und technischen Details von LDA sind komplex. Allen Interessi
 
 {% include embed/youtube.html id='T05t-SqKArY' %}
 
----
-# Die Berechnung eines LDA-Models auf der Grundlage eines Korpus aus Dokumenten
-
-In diesem Kapitel werde ich erläutern, wie ich ein Topic Model auf der Grundlage eines Dokumentenkorpus trainiert und visualisiert habe. 
-
-Das Berliner Medienunternehmen [Polit-X](https://polit-x.de/de/) stand uns bei der Datenbeschaffung zur Seite und stellte uns einige als XML-Dokument serialisierte Query's an ihre Datenbank zur Verfügung. Wir haben zu diesem Zweck eine Liste von Schlüsselwörtern zusammengestellt auf deren Grundlage die Query's abgesetzt wurde. Das Ergebnis enthält alle Dokumente der Datenbank, die das Keyword mindestens einmal enthalten.
-
-Zunächst habe ich einige Grundlagenarbeiten geleistet und verschiedene Python-Skripte geschrieben, um das Korpus einzulesen, zu verwalten und wieder zu serialisieren. Diese Funktionen habe ich mit der Klasse `CorpusManager` realisiert. Zudem habe ich einige Methoden implementiert, um die Dokumente des eingelesenen Korpus zu filtern.
-
-Meine Skripte habe ich im Github Repository [Doing_DDI](https://github.com/Nolram567/Doing_DDI) veröffentlicht.
-
-Das Skript `corpus_preprocessor.py` enthält eine Klasse, mit der man das Korpus für die Berechnung eines Themenmodells und andere Text-Mining-Methoden vorverarbeiten kann. Wichtige Hintergründe für die Vorverarbeitung von Texten für das Topic Modelling in der Politikwissenschaft können beispielsweise bei Denny & Spirling nachgelesen werden[^1].
-
----
-## Die Vorverarbeitung der Daten
-
-Meine Vorverarbeitung bestand aus den folgenden Schritten, die ich in der Methode `prepare_for_topic_modeling` der Klasse `CorpusPreprocessor` gebündelt habe:
-
-1. **Vorbereinigung**: Identifikation von fehlenden Leerzeichen z. B. am Ende von Sätzen.
-2. **Lemmatisierung**: Die Texte der Dokumente werden lemmatisiert, d. h. die Terme werden von ihrer ggf. flektierten Form auf die Grundform abgebildet. Diese Aufgabe übernimmt das Sprachmodell `de_core_news_lg` der Python-Bibliothek [spaCy](https://spacy.io/).
-3. **Normalisierung**: Die Texte werden zu Kleinschreibung normalisiert.
-4. **Tokenisierung**: Die Texte, die als Einzelstrings vorliegen, werden zu Listen aus Termen aufgetrennt.
-5. **N-Gram Inklusion**: Multiword Expressions werden zu einem Term konkateniert, sodass sie vom Model als Bedeutungseinheit erfasst werden.
-6. **Bereinigung**: Wir entfernen Stoppwörter, E-Mail-Adressen, Zahlen, sehr seltene Terme, (...).
-
-
----
-
-## Die Berechnung des Topic Models
-
-Für die Berechnung des LDA-Models nutze ich die etablierte Python-Bibliothek `gensim`[^2]. Nur am Rande möchte ich erwähnen, dass es zahlreiche Algorithmen für die Berechnung von Themenmodellen gibt. Beispielsweise konnten in der Politikwissenschaft mit `Non-Negative Matrix Factorization` bereits gute Ergebnisse erzielt werden[^3]. Allerdings ist LDA nach wie der bewährteste und am häufigsten genutzte Ansatz für die Themenmodellierung.
-
-Bevor wir mit dem Training des LDA-Models beginnen können, müssen wir unser Korpus in die Vektordarstellung - in ein Bag-of-Words-Model[^4] -transformieren. Zudem müssen wir ein Dictionary erstellen, das alle individuellen Terme auf eine eineindeutige ID abbildet. 
-
----
-
-### Wie funktioniert Latent Dirichlet Allocation?
-
-LDA ist ein unüberwachtes Lernverfahren für die Themenmodellierung zum Zwecke der Klassifikation (und der Analyse) von Dokumenten, das auf David Blei zurückgeht[^5]. Kurzgesagt modellieren wir die Dokumente als Wahrscheinlichkeitsverteilungen. Wir modellieren die Dokumente als Verteilungen über den Themen und die Themen als Verteilungen über das Vokabular des Korpus. Im Ergebnis können wir jedem Thema - mit einer gewissen Wahrscheinlichkeit - die Terme zuweisen, die es konstituieren und jedem Dokument - mit einer gewissen Wahrscheinlichkeit - die Anteile der Themen, die es beinhaltet. Der Begriff "Thema" ist hier nicht im Sinne seiner herkömmlichen Bedeutung zu verstehen. LDA modelliert Themen als Termmengen, die in einem Kontext - hier: Dokumente - häufiger kookkurrieren als andere Terme der Grundgesamtheit.
-
-Die mathematischen und technischen Details von LDA sind komplex. Allen Interessierten kann ich beispielweise Kapitel 7.6.2. in "Applied Text Mining"[^6] empfehlen sowie das folgende Video auf YouTube:
-
-{% include embed/youtube.html id='T05t-SqKArY' %}
-
----
-
 ### Das Filtern der Dokumente
-Da unser Korpus alle Dokumente enthält, in den das Wort "Dateninstitut" mindestens einmal auftaucht, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Terme aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median aller Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
+Da unser Korpus alle Dokumente enthält, in denen das Wort "Dateninstitut" mindestens einmal auftaucht, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Terme aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median aller Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
 
 ---
 
-### Die Parametrisierung des Models
+### Die Parametrisierung des Modells
 Die Parametrisierung des Models ist eine diffizile Angelegenheit. Grundsätzlich führen unterschiedliche Kombinationen zu akkuraten Ergebnissen. Allerdings sind manche Parameter wichtiger für die Kohärenz und Interpretierbarkeit der Ergebnisse als andere. Ein zentraler Parameter des LDA-Algorithmus ist die Zahl der Themen `k`. Für die Bestimmung eines angemessenen `k` habe ich eine Reihe von Modellen mit differenten `k` berechnet und für jedes Model die semantische Kohärenz C<sub>V</sub>[^7] bestimmt. Die Bibliothek `gensim` implementiert Methoden, um C<sub>V</sub> zu berechnen. Das Model, bei welchem das Maximum der C<sub>V</sub>-Werte gemessen wurde, wird für die qualitative Begutachtung gespeichert und visualisiert.
 
 Weitere wichtige Parameter sind:

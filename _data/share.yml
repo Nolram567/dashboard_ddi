@@ -24,12 +24,12 @@ platforms:
   #   icon: "fab fa-weibo"
   #   link: "https://service.weibo.com/share/share.php?title=TITLE&url=URL"
   #
-  # - type: Mastodon
-  #   icon: "fa-brands fa-mastodon"
+   - type: Mastodon
+     icon: "fa-brands fa-mastodon"
      # See: https://github.com/justinribeiro/share-to-mastodon#properties
-  #   instances:
-  #     - label: mastodon.social
-  #       link: "https://mastodon.social/"
+     instances:
+       - label: mastodon.social
+         link: "https://mastodon.social/"
   #     - label: mastodon.online
   #       link: "https://mastodon.online/"
   #     - label: fosstodon.org

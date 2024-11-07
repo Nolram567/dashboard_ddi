@@ -94,7 +94,7 @@ Für die Visualisierung des Modells habe ich die Python-Bibliothek `pyLDAvis` ve
 Über den Regler kann der Parameter `λ` angepasst werden. Er steht standardmäßig auf 1. In diesem Fall werden die 30 salienten Terme als Histogramm dargestellt, wenn man ein Thema auswählt. Die Salienz wird über die Wahrscheinlichkeit des jeweiligen Terms für ein Thema bestimmt. Setzt man `λ` auf 0, so werden besonders exklusive Terme gelistet, das sind diejenigen Terme, die fast ausschließlich im Kontext dieses Themas vorkommen.
 Der `λ`-Parameter ist erfahrungsgemäß mit Problemen behaftet, ich empfehle eine Erkundung des Modells mit der Standardeinstellung: `λ=1`. Bitte aktiviere für die korrekte Funktionalität der Grafik JavaScript.
 
-{% include_relative html/lda_viz.html %}
+{% include lda_viz.html %}
 
 ---
 

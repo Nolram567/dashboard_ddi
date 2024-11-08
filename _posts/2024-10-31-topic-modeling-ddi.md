@@ -40,7 +40,7 @@ Die von mir durchgeführte Vorverarbeitung bestand aus den folgenden Schritten, 
 
 Für die Berechnung des Themenmodells mit Latent Dirichlet Allocation (LDA) nutze ich die etablierte Python-Bibliothek `gensim`[^2]. Nur am Rande möchte ich erwähnen, dass es zahlreiche Algorithmen für die Berechnung von Themenmodellen gibt. Beispielsweise konnten in der Politikwissenschaft mit der `Non-Negative Matrix Factorization` bereits gute Ergebnisse erzielt werden[^3]. Allerdings ist LDA nach wie vor ein bewährter und häufig genutzter Ansatz für die Themenmodellierung.
 
-Bevor wir mit dem Training des LDA-Modells beginnen können, müssen wir unser Korpus in die Vektordarstellung - in ein Bag-of-Words-Model[^4] -transformieren. Zudem müssen wir ein Dictionary erstellen, das alle individuellen Terme auf eine eineindeutige ID abbildet. 
+Bevor wir mit dem Training des LDA-Modells beginnen können, müssen wir unser Korpus in die Vektordarstellung - in ein Bag-of-Words-Model[^4] - transformieren. Zudem müssen wir ein Dictionary erstellen, das alle individuellen Terme auf eine eineindeutige ID abbildet. 
 
 ---
 
@@ -48,12 +48,16 @@ Bevor wir mit dem Training des LDA-Modells beginnen können, müssen wir unser K
 
 LDA ist ein unüberwachtes Lernverfahren für die Themenmodellierung zum Zwecke der Klassifikation (und der Analyse) von Dokumenten. Das Verfahren geht auf David Blei zurückgeht[^5]. Kurzgesagt modellieren wir die Dokumente als Wahrscheinlichkeitsverteilungen. Wir modellieren die Dokumente als Verteilungen über den Themen und die Themen als Verteilungen über das Vokabular des Korpus. Im Ergebnis können wir jedem Thema - mit einer gewissen Wahrscheinlichkeit - die Terme zuweisen, die es konstituieren und jedem Dokument - mit einer gewissen Wahrscheinlichkeit - die Anteile der Themen, die es beinhaltet. Der Begriff "Thema" ist hier nicht im Sinne seiner herkömmlichen Bedeutung zu verstehen. LDA modelliert Themen als Termmengen, die in einem Kontext - hier: Dokumente - häufiger kookkurrieren als andere Terme der Grundgesamtheit.
 
-Die mathematischen und technischen Details von LDA sind komplex. Allen Interessierten kann ich beispielsweise Kapitel 7.6.2. in "Applied Text Mining"[^6] empfehlen sowie das folgende Video auf YouTube:
+Die mathematischen und technischen Details von LDA sind komplex. Allen Interessierten kann ich beispielsweise Kapitel 7.6.2. in "Applied Text Mining"[^6] empfehlen sowie die folgende Video auf YouTube:
+
+{% include embed/youtube.html id='IUAHUEy1V0Q' %}
+
+---
 
 {% include embed/youtube.html id='T05t-SqKArY' %}
 
 ### Das Filtern der Dokumente
-Da unser Korpus alle Dokumente enthält, in denen das Wort "Dateninstitut" mindestens einmal auftaucht, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Terme aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median aller Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
+Da unser Korpus alle Dokumente enthält, die das Wort "Dateninstitut" mindestens einmal enthalten, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Terme aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median der Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
 
 ---
 
@@ -91,10 +95,8 @@ LdaModel(
 ## Die Visualisierung des Models
 
 Für die Visualisierung des Modells habe ich die Python-Bibliothek `pyLDAvis` verwendet[^8].
-Über den Regler kann der Parameter `λ` angepasst werden. Er steht standardmäßig auf 1. In diesem Fall werden die 30 salienten Terme als Histogramm dargestellt, wenn man ein Thema auswählt. Die Salienz wird über die Wahrscheinlichkeit des jeweiligen Terms für ein Thema bestimmt. Setzt man `λ` auf 0, so werden besonders exklusive Terme gelistet, das sind diejenigen Terme, die fast ausschließlich im Kontext dieses Themas vorkommen.
-Der `λ`-Parameter ist erfahrungsgemäß mit Problemen behaftet, ich empfehle eine Erkundung des Modells mit der Standardeinstellung: `λ=1`. Bitte aktiviere für die korrekte Funktionalität der Grafik JavaScript.
 
-{% include lda_viz.html %}
+{% include lda_embeding.html %}
 
 ---
 

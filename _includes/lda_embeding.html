@@ -1,0 +1,32 @@
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iframe Embed</title>
+  <style>
+    /* Container, der den Iframe umgibt */
+    .iframe-container {
+      width: 100%; /* Container nimmt die volle Breite des Markdown-Posts ein */
+      max-width: 100%; /* Verhindert, dass der Container breiter als der Post wird */
+      margin: 0 auto; /* Zentriert den Container */
+    }
+
+    /* Iframe Styling */
+    .iframe-container iframe {
+      width: 100%; /* 40 % breiter als die Container-Breite */
+      height: auto; /* Höhe wird automatisch angepasst, um das Seitenverhältnis zu bewahren */
+      aspect-ratio: 16 / 9; /* Passt das Seitenverhältnis der Höhe an */
+      border: none; /* Entfernt den Rahmen des Iframes */
+      display: block; /* Block-Display für eine bessere Formatierung */
+      margin: 0 auto; /* Zentriert das Iframe im Container */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="iframe-container">
+    <iframe src="https://nolram567.github.io/Doing_DDI/" allowfullscreen></iframe>
+  </div>
+
+</body>
+</html>

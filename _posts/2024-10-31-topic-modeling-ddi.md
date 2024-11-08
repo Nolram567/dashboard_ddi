@@ -18,7 +18,7 @@ Zunächst habe ich einige Grundlagenarbeiten geleistet und verschiedene Python-S
 
 Meine Skripte habe ich im Github Repository [Doing_DDI](https://github.com/Nolram567/Doing_DDI) veröffentlicht.
 
-Das Skript `corpus_preprocessor.py` enthält eine Klasse, mit der man das Korpus für die Berechnung eines Themenmodells und (für andere Text-Mining-Methoden) vorverarbeiten kann. Wichtige Hintergründe zu der Vorverarbeitung von Texten für das Topic Modeling in der Politikwissenschaft können beispielsweise bei Denny & Spirling nachgelesen werden[^1].
+Das Skript `corpus_preprocessor.py` enthält eine Klasse, mit der man das Korpus für die Berechnung eines Themenmodells (und für andere Text-Mining-Methoden) vorverarbeiten kann. Wichtige Hintergründe zu der Vorverarbeitung von Texten für das Topic Modeling in der Politikwissenschaft können beispielsweise bei Denny & Spirling nachgelesen werden[^1].
 
 ---
 
@@ -46,18 +46,22 @@ Bevor wir mit dem Training des LDA-Modells beginnen können, müssen wir unser K
 
 ### Wie funktioniert Latent Dirichlet Allocation?
 
-LDA ist ein unüberwachtes Lernverfahren für die Themenmodellierung zum Zwecke der Klassifikation (und der Analyse) von Dokumenten. Das Verfahren geht auf David Blei zurückgeht[^5]. Kurzgesagt modellieren wir die Dokumente als Wahrscheinlichkeitsverteilungen. Wir modellieren die Dokumente als Verteilungen über den Themen und die Themen als Verteilungen über das Vokabular des Korpus. Im Ergebnis können wir jedem Thema - mit einer gewissen Wahrscheinlichkeit - die Terme zuweisen, die es konstituieren und jedem Dokument - mit einer gewissen Wahrscheinlichkeit - die Anteile der Themen, die es beinhaltet. Der Begriff "Thema" ist hier nicht im Sinne seiner herkömmlichen Bedeutung zu verstehen. LDA modelliert Themen als Termmengen, die in einem Kontext - hier: Dokumente - häufiger kookkurrieren als andere Terme der Grundgesamtheit.
+LDA ist ein unüberwachtes Lernverfahren für die Themenmodellierung zum Zwecke der Klassifikation (und der Analyse) von Dokumenten. Das Verfahren geht auf den Informatiker David Blei zurück[^5]. Kurzgesagt modellieren wir die Dokumente als Wahrscheinlichkeitsverteilungen.Die Dokumente werden als Verteilungen über den Themen und die Themen als Verteilungen über das Vokabular des Korpus modelliert. Im Ergebnis können wir jedem Thema - mit einer gewissen Wahrscheinlichkeit - die Terme zuweisen, die es konstituieren und jedem Dokument - mit einer gewissen Wahrscheinlichkeit - die Anteile der Themen, die es beinhaltet. Der Begriff "Thema" ist hier nicht im Sinne seiner herkömmlichen Bedeutung zu verstehen. LDA modelliert Themen als Termmengen, die in einem Kontext - hier: Dokumente - häufiger kookkurrieren als andere Terme der Grundgesamtheit.
 
-Die mathematischen und technischen Details von LDA sind komplex. Allen Interessierten kann ich beispielsweise Kapitel 7.6.2. in "Applied Text Mining"[^6] empfehlen sowie die folgende Video auf YouTube:
+Die mathematischen und technischen Details von LDA sind komplex. Allen Interessierten kann ich beispielsweise Kapitel 7.6.2. in "Applied Text Mining"[^6] empfehlen sowie die folgenden Videos auf YouTube:
+
+**Eine Einführung in die Themenmodellierung mit R (Kontext: Computational Social Sciences):**
 
 {% include embed/youtube.html id='IUAHUEy1V0Q' %}
 
----
+**Die mathematischen-technischen Details verständlich erklärt:** 
 
 {% include embed/youtube.html id='T05t-SqKArY' %}
 
+---
+
 ### Das Filtern der Dokumente
-Da unser Korpus alle Dokumente enthält, die das Wort "Dateninstitut" mindestens einmal enthalten, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Terme aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median der Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
+Da unser Korpus alle Dokumente enthält, die das Wort "Dateninstitut" mindestens einmal enthalten, musste ich zusätzlich einige Dokumente filtern, um ein akkurates Ergebnis zu erzielen. Das Korpus enthält neben langen Dokumenten, die das DI nur am Rande thematisieren - wie etwa Haushaltsgesetze - auch Pressemitteilungen ohne substanziellen Inhalt, die etwa eine Personalie bekannt gegeben. Ich habe daher alle Dokumente mit weniger als 150 Termen aussortiert. Zusätzlich habe ich die irrelevanten Dokumente entfernt. Zu diesem Zweck habe ich die `TF-IDF` für den Term "Dateninstitut" für alle Dokumente berechnet und alle Dokumente entfernt, deren `TF-IDF` für "Dateninstitut" kleiner ist als der Median der Werte. Auf diese Weise wird die weniger relevante Hälfte der Dokumente entfernt.
 
 ---
 
@@ -65,13 +69,13 @@ Da unser Korpus alle Dokumente enthält, die das Wort "Dateninstitut" mindestens
 Die Parametrisierung des Models ist eine diffizile Angelegenheit. Grundsätzlich führen unterschiedliche Kombinationen zu akkuraten Ergebnissen. Allerdings sind manche Parameter wichtiger für die Kohärenz und Interpretierbarkeit der Ergebnisse als andere. Ein zentraler Parameter des LDA-Algorithmus ist die Zahl der Themen `k`. Für die Bestimmung eines angemessenen `k` habe ich eine Reihe von Modellen mit differenten `k` berechnet und für jedes Model die semantische Kohärenz C<sub>V</sub>[^7] bestimmt. Die Bibliothek `gensim` implementiert Methoden, um C<sub>V</sub> zu berechnen. Das Model, bei welchem das Maximum der C<sub>V</sub>-Werte gemessen wurde, wird für die qualitative Begutachtung gespeichert und visualisiert.
 
 Weitere wichtige Parameter sind:
-* Die Hyperparameter `alpha` und `eta`: Diese Parameter können wir vom Algorithmus optimieren lassen, indem wir sie aus `auto` setzen, wir können sie auf eine konkrete Zahl setzen oder auf `asymetric`, in diesem Fall werden auch asymmetrische Gewichtungen von Themen in Dokumenten erlaubt.
-* `chunksize`: Die Menge der Dokumente, die in parallel verarbeitet wird.
+* Die Hyperparameter `alpha` und `eta`: Die Parameter `alpha` und `eta` bestimmen die (initiale) Verteilung der Themen in Dokumenten (alpha) und der Wörter in Themen (eta). Beide Parameter können wir vom Algorithmus optimieren lassen, indem wir sie auf `auto` setzen. Alternativ können wir eine Konstante übergeben oder `alpha` auf `asymmetric` setzen. Mit `asymmetric` wird eine asymmetrische Verteilung zugelassen, was bedeutet, dass manche Themen in bestimmten Dokumenten bevorzugt auftreten können.
+* `chunksize`: Die Menge der Dokumente, die parallel verarbeitet wird.
 * `iterations`: Wie oft wiederholen wir den Trainingsprozess pro Dokument.
 * `passes`: Wie oft wiederholen wir den Trainingsprozess für das Korpus.
 * (...)
 
-Weitere Einblicke können beispielsweise aus der Dokumentation von `gensim` gewonnen werden.
+Weitere Einblicke können beispielsweise aus der [Dokumentation](https://radimrehurek.com/gensim/auto_examples/tutorials/run_lda.html#sphx-glr-auto-examples-tutorials-run-lda-py) von `gensim` gewonnen werden.
 
 Die Parametrisierung, die der Visualisierung des Models am Ende dieses Beitrags zugrunde liegt:
 
@@ -86,7 +90,7 @@ LdaModel(
     alpha='asymmetric',  # Topic Distribution per document
     eta='auto',  # Automatic distribution of terms per topic
     eval_every=1,  # Evaluation after every iteration
-    random_state=42 # Choose a konstant value for better reproducibility
+    random_state=42 # Choose a constant value for better reproducibility
 )
 ```
 
@@ -94,7 +98,7 @@ LdaModel(
 
 ## Die Visualisierung des Models
 
-Für die Visualisierung des Modells habe ich die Python-Bibliothek `pyLDAvis` verwendet[^8].
+Für die Visualisierung des Modells habe ich die Python-Bibliothek `pyLDAvis` verwendet[^8]. Die Kreise stellen die Themen und ihr Gewicht im Korpus dar, und beim klicken auf oder hoovern über einen der Kreise kann man die salienten Terme des jeweiligen Themas begutachten. Der blaue Balken veranschaulicht die Salienz des Terms und der rote Balken die Exklusivität. Die Grafik kann [hier](https://nolram567.github.io/Doing_DDI/) im Vollbildmodus erkundet werden.
 
 {% include lda_embeding.html %}
 
